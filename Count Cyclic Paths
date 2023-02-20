@@ -1,0 +1,22 @@
+class Solution{   
+public:
+    int countPaths(int N){
+        vector<int>arr[4];
+        N++;
+        long long a = 0, b =0, c = 0, d = 1;
+        
+        long long mod = 1e9 + 7;
+        
+        for( int i = 1; i<N; i++ ){
+            long long A = ((( b%mod + c%mod )%mod)%mod + d%mod )%mod;
+            long long B = ((( a%mod + c%mod )%mod)%mod + d%mod )%mod;
+            long long C = ((( b%mod + a%mod )%mod)%mod + d%mod )%mod;
+            long long D = ((( b%mod + a%mod )%mod)%mod + c%mod )%mod;
+            a = A;
+            b = B;
+            c = C;
+            d = D;
+        }
+        return d;
+    }
+};
