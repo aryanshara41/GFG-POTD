@@ -1,7 +1,6 @@
 class Solution{   
 public:
     int countPaths(int N){
-        vector<int>arr[4];
         N++;
         long long a = 0, b =0, c = 0, d = 1;
         
