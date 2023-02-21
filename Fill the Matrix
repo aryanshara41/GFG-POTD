@@ -1,0 +1,37 @@
+class Solution{   
+public:
+    int X[4] = { -1, 1, 0, 0 };
+    int Y[4] = { 0, 0, -1, 1 };
+    
+    int minIteration(int N, int M, int x, int y){    
+        vector<vector<int>>arr( N, vector<int>(M, INT_MAX ) );
+        
+        queue<pair<int,int>>q;
+        q.push( {x-1, y-1} );
+        arr[x-1][y-1] = 1;
+        
+        while( q.size() ){
+            pair<int,int>p = q.front(); q.pop();
+            
+            for( int k = 0; k<4; k++ ){
+                int a = p.first + X[k];
+                int b = p.second + Y[k];
+                
+                if( a < 0 or b < 0 or a == N or b == M ) continue;
+                
+                if( arr[a][b] > 1 + arr[p.first][p.second] ){
+                    arr[a][b] = 1 + arr[p.first][p.second];
+                    q.push( { a, b } );
+                }
+            }
+        }
+        
+        int ans = 0;
+        for( int i = 0; i<N; i++ ){
+            for( int j = 0; j<M; j++ ) ans = max( ans, arr[i][j] );
+        }
+        
+        return ans-1;
+        
+    }
+};
