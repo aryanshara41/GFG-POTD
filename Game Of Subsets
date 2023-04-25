@@ -1,0 +1,60 @@
+//User function Template for C++
+
+class Solution{
+public:
+    int goodSubsets(vector<int> &arr, int n){
+        
+        int primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29 };
+        int p = 10, mod = 1e9 + 7, one = 0;
+        
+        vector<int>mp(31,0); // mask of primes that divides this number
+        for( int i = 2; i<31; i++ ){
+            if( i%4== 0 or i%9 == 0 or i%25 == 0 ){
+                continue;
+            }
+            
+            int mask = 0;
+            for( int j = 0; j<p; j++ ){
+                if( i%primes[j] == 0 ) {
+                    mask |= ( 1 << j );
+                }
+            }
+            mp[i] = mask;
+        }
+        
+        vector<int>dp(1025,0);
+        dp[0] = 1;
+        
+        unordered_map<int,int>cnt;
+        for( auto &it : arr ) {
+            if( it == 1 ){
+                one++; continue;
+            }
+            cnt[it]++;
+        }
+        
+        int ans = 0;
+        for( int i = 1; i<31; i++ ){
+            if( cnt[i] == 0 || mp[i] == 0 ) continue;
+            
+            for( int j = 0; j<(1<<10); j++ ){
+                // if there is not prime that is common between mask of i and current mask
+                if((mp[i]&j) == 0 ) {
+                    // cout << i << " " << j << " " << dp[j] << endl;
+                    dp[j | mp[i]] = (int) ((dp[j | mp[i]] + dp[j] * (long)cnt[i]) % mod);
+                }
+            }
+        }
+        
+        for( int i = 1; i<1025; i++ ){
+            ans = (ans%mod + dp[i]%mod )%mod;
+        }
+        
+        if( one ){
+            int res = ( (int)pow(2,one)%mod * ans%mod )%mod;
+            return res;
+        }
+        
+        return ans;
+    }
+};
