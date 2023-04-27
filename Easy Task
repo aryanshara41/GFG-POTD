@@ -1,0 +1,107 @@
+class Solution{
+public:
+    vector<vector<int>>arr;
+
+void build( int ind, int low, int high, string &str ){
+    if( low == high ){
+        arr[ind][ str[low] - 'a' ]++;
+        return;
+    }
+    
+    int mid = ( low + high ) >> 1;
+    build( 2 * ind + 1, low, mid, str );
+    build( 2 * ind + 2, mid + 1, high, str );
+    
+    for( int i = 0; i<26; i++ ){
+        arr[ind][i] += arr[2 * ind + 1 ][i] + arr[2 * ind + 2 ][i];
+    }
+}
+
+void update( int ind, int low, int high, int index, char ch, string &str ){
+    if( low == high ){
+        int current = str[low] - 'a';
+        arr[ind][ str[low] - 'a' ]--;
+
+        str[low] = ch;
+        arr[ind][ str[low] - 'a' ]++;
+
+        return;
+    }
+    
+    // now find mid
+    int mid = ( low + high ) >> 1;
+    if( index <= mid ){
+        // means go to left
+        update( 2 * ind + 1, low, mid, index, ch, str );
+    }
+    else{
+        // means go to right
+        update( 2 * ind + 2, mid + 1, high, index, ch, str );
+    }
+    
+    // now update the current node
+    for( int i = 0; i<26; i++ ){
+        arr[ind][i] = arr[2*ind+1][i] + arr[2*ind+2][i];
+    }
+}
+
+// find the count of all the characters in the ragne l - r
+void query( int ind, int low, int high, int l, int r, vector<int>&cnt ){
+    if( high < l or r < low ) return;
+    
+    if( low >= l and high <= r ){
+        for( int i = 0; i<26; i++ ){
+            cnt[i] += arr[ind][i];
+            if( cnt[i] ){
+                char ch  = i + 'a';
+            }
+        }
+        return;
+    }
+    
+    int mid = ( low + high ) >> 1;
+    
+    query( 2 * ind + 1, low, mid, l, r, cnt );
+    query( 2 * ind + 2, mid + 1, high, l, r, cnt );
+}
+
+char findAns( vector<int>&cnt, int k ){
+    for( int i = 25; i>=0; i-- ){
+        k -= cnt[i];
+        if( k <=0 ) return i + 'a';
+    }
+    
+    return '1';
+}
+
+
+vector<char> easyTask(int n,string s,int q,vector<vector<string>> &queries){
+    arr = vector<vector<int>>( 4 * n, vector<int>(26,0) );
+    
+    build( 0, 0, n-1, s );
+    
+    vector<char>ans;
+    for( auto &it : queries ){
+        if( it[0] == "1" ){
+            //means update
+            int index = stoi(it[1]);
+            char ch = it[2][0];
+            
+            update( 0, 0, n-1, index, ch, s );
+        }
+        else{
+            int l = stoi(it[1]);
+            int r = stoi(it[2]);
+            int k = stoi(it[3]);
+            
+            vector<int>cnt(26,0);
+            query( 0, 0, n-1, l, r, cnt );
+
+            char result = findAns( cnt, k );
+            ans.push_back(result);
+        }
+    }
+    
+    return ans;
+}
+};
