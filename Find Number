@@ -1,0 +1,43 @@
+class Solution{
+public:
+    long long findNumber(long long N){
+        long long cnt = 0, t = N, five = 5, sum = 0;
+        while( t > 0 ){
+            cnt++; 
+            t -= five;
+            
+            if( t > 0 ) sum += five;
+            five *= 5;
+        }
+        
+        five /= 5;
+        
+        N -= sum;
+        
+        // cout << cnt << " " << five << " " << N << endl;
+        
+        long long ten = pow( 10ll, cnt-1 ), ans = 0;
+        
+        long long arr[5] = { 1, 3, 5, 7, 9 };
+        
+        for( int i = 0; i<cnt; i++ ){
+            // 1 3 5 7 9 
+            long long total = five/5ll;
+            int j = 0;
+            while( N > total ){
+                N -= total;
+                j++;
+            }
+            
+            // now N will become 0 or non zero
+            ans += ten * arr[j];
+            ten /= 10;
+            
+            if( N == 0 ) N += total;
+            
+            five /= 5;
+        }
+        
+        return ans;
+    }
+};
